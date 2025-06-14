@@ -24,7 +24,6 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Security from './pages/Security';
 import Compliance from './pages/Compliance';
 import Unauthorized from './pages/Unauthorized';
-import LandingPage from './pages/LandingPage';
 import Blog from './pages/Blog';
 import HelpCenter from './pages/HelpCenter';
 import HelpArticle from './pages/HelpArticle';
@@ -117,10 +116,9 @@ function App() {
     <ErrorBoundary>
       <div className="app-container">
         <Routes>
-          {/* Landing page */}
-          <Route path="/" element={<LandingPage />} />
-          
           {/* Public routes */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          
           <Route path="/login" element={
             user ? <Navigate to="/dashboard" replace /> : <LoginForm />
           } />
@@ -181,73 +179,75 @@ function App() {
 // Separate component for the main layout
 function MainLayout() {
   return (
-    <div className="main-content flex flex-col">
+    <div className="main-content">
       <TopNav />
-      <Header className="header" />
-      <main className="scrollable-content">
-        <ErrorBoundary>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="h-full"
-          >
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/leads" element={<Leads />} />
-              <Route path="/lead-scraper" element={<LeadScraper />} />
-              <Route path="/email-outreach" element={<EmailOutreach />} />
-              <Route path="/clients" element={
-                <AuthGuard requiredRole={['admin', 'closer', 'agent']}>
-                  <Clients />
-                </AuthGuard>
-              } />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/integrations" element={<Integrations />} />
-              <Route path="/integrations-page" element={<IntegrationsPage />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin" element={
-                <AuthGuard requiredRole={['admin']}>
-                  <AdminDashboard />
-                </AuthGuard>
-              } />
-              <Route path="/admin/users" element={
-                <AuthGuard requiredRole={['admin']}>
-                  <UserManagement />
-                </AuthGuard>
-              } />
-              <Route path="/admin/leads" element={
-                <AuthGuard requiredRole={['admin']}>
-                  <div className="p-6">
-                    <h1 className="text-3xl font-bold">Lead Management</h1>
-                    <p className="text-gray-600 mt-2">Admin view of all leads across the platform</p>
-                    <div className="mt-8 text-center text-gray-500">
-                      <p>Lead management interface would be implemented here</p>
+      <div className="content-area">
+        <Header className="header" />
+        <main className="scrollable-content">
+          <ErrorBoundary>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="h-full"
+            >
+              <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/leads" element={<Leads />} />
+                <Route path="/lead-scraper" element={<LeadScraper />} />
+                <Route path="/email-outreach" element={<EmailOutreach />} />
+                <Route path="/clients" element={
+                  <AuthGuard requiredRole={['admin', 'closer', 'agent']}>
+                    <Clients />
+                  </AuthGuard>
+                } />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/integrations" element={<Integrations />} />
+                <Route path="/integrations-page" element={<IntegrationsPage />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin" element={
+                  <AuthGuard requiredRole={['admin']}>
+                    <AdminDashboard />
+                  </AuthGuard>
+                } />
+                <Route path="/admin/users" element={
+                  <AuthGuard requiredRole={['admin']}>
+                    <UserManagement />
+                  </AuthGuard>
+                } />
+                <Route path="/admin/leads" element={
+                  <AuthGuard requiredRole={['admin']}>
+                    <div className="p-6">
+                      <h1 className="text-3xl font-bold">Lead Management</h1>
+                      <p className="text-gray-600 mt-2">Admin view of all leads across the platform</p>
+                      <div className="mt-8 text-center text-gray-500">
+                        <p>Lead management interface would be implemented here</p>
+                      </div>
                     </div>
-                  </div>
-                </AuthGuard>
-              } />
-              <Route path="/admin/logs" element={
-                <AuthGuard requiredRole={['admin']}>
-                  <div className="p-6">
-                    <h1 className="text-3xl font-bold">System Logs</h1>
-                    <p className="text-gray-600 mt-2">View system activity and audit logs</p>
-                    <div className="mt-8 text-center text-gray-500">
-                      <p>System logs interface would be implemented here</p>
+                  </AuthGuard>
+                } />
+                <Route path="/admin/logs" element={
+                  <AuthGuard requiredRole={['admin']}>
+                    <div className="p-6">
+                      <h1 className="text-3xl font-bold">System Logs</h1>
+                      <p className="text-gray-600 mt-2">View system activity and audit logs</p>
+                      <div className="mt-8 text-center text-gray-500">
+                        <p>System logs interface would be implemented here</p>
+                      </div>
                     </div>
-                  </div>
-                </AuthGuard>
-              } />
-              
-              {/* Fallback route */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
-          </motion.div>
-        </ErrorBoundary>
-      </main>
-      <BottomNav />
+                  </AuthGuard>
+                } />
+                
+                {/* Fallback route */}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+              </Routes>
+            </motion.div>
+          </ErrorBoundary>
+        </main>
+        <BottomNav />
+      </div>
     </div>
   );
 }
