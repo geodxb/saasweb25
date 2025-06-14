@@ -1,1 +1,0 @@
-// Remove this file completely as we're removing mobile support

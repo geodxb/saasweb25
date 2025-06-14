@@ -12,14 +12,13 @@ import {
   Mail,
   Database,
   ExternalLink,
-  Calendar,
-  Workflow
+  Calendar
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
-import { leadOperations, clientOperations, activityOperations } from '@/lib/firestore';
+import { leadOperations, clientOperations } from '@/lib/firestore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { checkIntegrationsSetup } from '@/lib/integrations';
@@ -427,11 +426,11 @@ export default function Dashboard() {
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span>Open rate:</span>
-                    <span className="font-medium">{Math.round((emailAnalyticsOperations.getEmailStats(user.uid).then(stats => stats.openRate) || 0))}%</span>
+                    <span className="font-medium">0%</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Click rate:</span>
-                    <span className="font-medium">{Math.round((emailAnalyticsOperations.getEmailStats(user.uid).then(stats => stats.clickRate) || 0))}%</span>
+                    <span className="font-medium">0%</span>
                   </div>
                   <Button 
                     variant="outline" 

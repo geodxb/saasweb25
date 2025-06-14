@@ -6,7 +6,6 @@ import {
   User, 
   Bell, 
   Shield, 
-  Globe,
   Smartphone,
   Key,
   Trash2,
@@ -15,18 +14,7 @@ import {
   Plus,
   ExternalLink,
   AlertTriangle,
-  Crown,
-  Zap,
-  Calendar,
-  Mail,
-  Database,
-  Webhook,
-  Eye,
-  EyeOff,
-  Copy,
-  RefreshCw,
-  Activity,
-  UserPlus
+  Activity
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,7 +23,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -65,7 +53,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
-import IntegrationsSettings from '@/pages/settings/IntegrationsSettings';
 
 interface ApiKey {
   id: string;
@@ -76,86 +63,13 @@ interface ApiKey {
   isVisible: boolean;
 }
 
-interface ConnectedService {
-  id: string;
-  name: string;
-  description: string;
-  icon: any;
-  isConnected: boolean;
-  lastSync?: string;
-  status: 'active' | 'error' | 'pending';
-}
-
-const connectedServices: ConnectedService[] = [
-  {
-    id: 'calendly',
-    name: 'Calendly',
-    description: 'Schedule meetings and appointments',
-    icon: Calendar,
-    isConnected: true,
-    lastSync: '2 hours ago',
-    status: 'active',
-  },
-  {
-    id: 'mailchimp',
-    name: 'Mailchimp',
-    description: 'Email marketing and automation',
-    icon: Mail,
-    isConnected: false,
-    status: 'pending',
-  },
-  {
-    id: 'zapier',
-    name: 'Zapier',
-    description: 'Connect with 5000+ apps',
-    icon: Zap,
-    isConnected: true,
-    lastSync: '5 minutes ago',
-    status: 'error',
-  },
-  {
-    id: 'airtable',
-    name: 'Airtable',
-    description: 'Database and project management',
-    icon: Database,
-    isConnected: false,
-    status: 'pending',
-  },
-  {
-    id: 'webhook',
-    name: 'Custom Webhooks',
-    description: 'Send data to custom endpoints',
-    icon: Webhook,
-    isConnected: true,
-    lastSync: '30 minutes ago',
-    status: 'active',
-  },
-];
-
 export default function Settings() {
   const { user, profile, updateProfile } = useAuth();
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'profile';
   
   const [activeTab, setActiveTab] = useState(initialTab);
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([
-    {
-      id: '1',
-      name: 'Production API',
-      key: 'sk_live_51234567890abcdef',
-      lastUsed: '2 hours ago',
-      permissions: ['read', 'write'],
-      isVisible: false,
-    },
-    {
-      id: '2',
-      name: 'Development API',
-      key: 'sk_test_51234567890abcdef',
-      lastUsed: '1 week ago',
-      permissions: ['read'],
-      isVisible: false,
-    },
-  ]);
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
 
   const [notifications, setNotifications] = useState({
     email: true,
@@ -204,19 +118,6 @@ export default function Settings() {
     // You could add a toast notification here
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'error':
-        return 'bg-red-100 text-red-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   const handleSaveProfile = async () => {
     if (!user || !profile) return;
     
@@ -251,14 +152,10 @@ export default function Settings() {
         transition={{ delay: 0.1 }}
       >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="w-4 h-4" />
               <span className="hidden sm:inline">Profile</span>
-            </TabsTrigger>
-            <TabsTrigger value="integrations" className="flex items-center space-x-2">
-              <Globe className="w-4 h-4" />
-              <span className="hidden sm:inline">Integrations</span>
             </TabsTrigger>
             <TabsTrigger value="notifications" className="flex items-center space-x-2">
               <Bell className="w-4 h-4" />
@@ -271,10 +168,6 @@ export default function Settings() {
             <TabsTrigger value="activity" className="flex items-center space-x-2">
               <Activity className="w-4 h-4" />
               <span className="hidden sm:inline">Activity</span>
-            </TabsTrigger>
-            <TabsTrigger value="danger" className="flex items-center space-x-2">
-              <AlertTriangle className="w-4 h-4" />
-              <span className="hidden sm:inline">Danger Zone</span>
             </TabsTrigger>
           </TabsList>
 
@@ -454,11 +347,6 @@ export default function Settings() {
             </Card>
           </TabsContent>
 
-          {/* Integrations Tab */}
-          <TabsContent value="integrations" className="space-y-6">
-            <IntegrationsSettings />
-          </TabsContent>
-
           {/* Notifications Tab */}
           <TabsContent value="notifications" className="space-y-6">
             <Card>
@@ -475,7 +363,6 @@ export default function Settings() {
                       { id: 'lead-converted', label: 'Lead converted to client' },
                       { id: 'task-assigned', label: 'Task assigned to you' },
                       { id: 'meeting-scheduled', label: 'Meeting scheduled' },
-                      { id: 'workflow-completed', label: 'Workflow completed' },
                     ].map((item) => (
                       <div key={item.id} className="flex items-center justify-between">
                         <Label htmlFor={`email-${item.id}`} className="text-sm">{item.label}</Label>
@@ -495,7 +382,6 @@ export default function Settings() {
                       { id: 'lead-converted', label: 'Lead converted to client' },
                       { id: 'task-assigned', label: 'Task assigned to you' },
                       { id: 'meeting-scheduled', label: 'Meeting scheduled' },
-                      { id: 'workflow-completed', label: 'Workflow completed' },
                     ].map((item) => (
                       <div key={item.id} className="flex items-center justify-between">
                         <Label htmlFor={`push-${item.id}`} className="text-sm">{item.label}</Label>
@@ -653,21 +539,9 @@ export default function Settings() {
                       icon: User
                     },
                     { 
-                      action: 'Lead Created', 
-                      details: 'Created lead "Acme Corporation"', 
-                      time: '1 day ago',
-                      icon: UserPlus
-                    },
-                    { 
                       action: 'Password Changed', 
                       details: 'Your account password was updated', 
                       time: '1 week ago',
-                      icon: Key
-                    },
-                    { 
-                      action: 'API Key Generated', 
-                      details: 'New API key created for development', 
-                      time: '2 weeks ago',
                       icon: Key
                     },
                     { 

@@ -37,7 +37,6 @@ import EmailSupport from './pages/EmailSupport';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import Integrations from './pages/Integrations';
-import IntegrationsPage from './pages/IntegrationsPage';
 import { Toaster } from '@/components/ui/sonner';
 import { Loader2 } from 'lucide-react';
 import './App.css';
@@ -202,7 +201,6 @@ function MainLayout() {
                 } />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/integrations" element={<Integrations />} />
-                <Route path="/integrations-page" element={<IntegrationsPage />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin" element={

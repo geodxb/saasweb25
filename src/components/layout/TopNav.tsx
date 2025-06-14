@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, 
   UserPlus, 
@@ -8,8 +7,6 @@ import {
   Settings, 
   Search,
   Mail,
-  Globe,
-  CreditCard,
   LogOut,
   User,
   ChevronDown,
@@ -44,7 +41,6 @@ export default function TopNav() {
     { name: 'Lead Scraper', href: '/lead-scraper', icon: Search },
     { name: 'Email Outreach', href: '/email-outreach', icon: Mail },
     { name: 'Clients', href: '/clients', icon: Users, requiredRoles: ['admin', 'closer', 'agent'] },
-    { name: 'Integrations', href: '/integrations-page', icon: Globe },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
@@ -218,12 +214,7 @@ export default function TopNav() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="md:hidden mt-2 py-2 border-t"
-        >
+        <div className="md:hidden mt-2 py-2 border-t">
           <div className="space-y-1 px-2">
             {navigation
               .filter(item => canAccessRoute(item.requiredRoles))
@@ -312,7 +303,7 @@ export default function TopNav() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
     </nav>
   );
