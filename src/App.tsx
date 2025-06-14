@@ -10,7 +10,6 @@ import FeedbackButton from '@/components/common/FeedbackButton';
 import LoginForm from '@/components/auth/LoginForm';
 import SignUpForm from '@/components/auth/SignUpForm';
 import TopNav from './components/layout/TopNav';
-import Header from './components/layout/Header';
 import Dashboard from './pages/Dashboard';
 import Leads from './pages/Leads';
 import LeadScraper from './pages/LeadScraper';
@@ -39,8 +38,6 @@ import Integrations from './pages/Integrations';
 import IntegrationsPage from './pages/IntegrationsPage';
 import { Toaster } from '@/components/ui/sonner';
 import { Loader2 } from 'lucide-react';
-import BottomNav from './components/common/BottomNav';
-import { APP_INFO } from './lib/config';
 import './App.css';
 
 function App() {
@@ -182,7 +179,6 @@ function MainLayout() {
     <div className="main-content">
       <TopNav />
       <div className="content-area">
-        <Header className="header" />
         <main className="scrollable-content">
           <ErrorBoundary>
             <motion.div
@@ -246,7 +242,6 @@ function MainLayout() {
             </motion.div>
           </ErrorBoundary>
         </main>
-        <BottomNav />
       </div>
     </div>
   );

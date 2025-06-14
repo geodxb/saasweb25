@@ -38,7 +38,7 @@ export const API_ENDPOINTS = {
 
 // Feature flags
 export const FEATURES = {
-  ENABLE_AI_ASSISTANT: true,
+  ENABLE_AI_ASSISTANT: false,
   ENABLE_LEAD_SCRAPER: true,
   ENABLE_WORKFLOW_BUILDER: false,
   ENABLE_GOOGLE_MAPS_SCRAPER: false,
