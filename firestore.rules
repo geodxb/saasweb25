@@ -1,0 +1,280 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to get user data
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    // Helper function to check if user has admin role
+    function isAdmin() {
+      return isAuthenticated() && getUserData().role == "admin";
+    }
+    
+    // Helper function to check if user has specific roles
+    function hasRole(roles) {
+      return isAuthenticated() && getUserData().role in roles;
+    }
+    
+    // Helper function to check if user owns the resource
+    function isOwner(ownerId) {
+      return isAuthenticated() && request.auth.uid == ownerId;
+    }
+    
+    // Helper function to check if user can edit leads (admin or owner)
+    function canEditLead(leadData) {
+      return isAuthenticated() && (
+        isAdmin() || 
+        request.auth.uid == leadData.ownerId ||
+        request.auth.uid == leadData.assignedTo
+      );
+    }
+    
+    // Helper function to check if user can convert leads
+    function canConvertLead() {
+      return isAuthenticated() && hasRole(["admin", "closer", "agent"]);
+    }
+    
+    // Helper function to check if user can view clients
+    function canViewClients() {
+      return isAuthenticated() && hasRole(["admin", "closer", "agent"]);
+    }
+
+    // Users collection - users can only read/write their own profile
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Allow admins to read all user profiles (for role management)
+      allow read: if isAdmin();
+      
+      // Allow admins to update user roles
+      allow update: if isAdmin() && 
+        request.resource.data.keys().hasOnly(['role', 'updatedAt']) &&
+        request.resource.data.role in ["admin", "closer", "agent", "setter", "user"];
+    }
+
+    // Leads collection
+    match /leads/{leadId} {
+      // Read permissions
+      allow read: if isAuthenticated() && (
+        isAdmin() ||                                    // Admins can read all leads
+        resource.data.ownerId == request.auth.uid ||    // Owners can read their leads
+        resource.data.assignedTo == request.auth.uid    // Assigned users can read leads
+      );
+      
+      // Create permissions - users with lead creation roles
+      allow create: if isAuthenticated() && 
+        hasRole(["admin", "closer", "agent", "setter", "user"]) &&
+        request.resource.data.ownerId == request.auth.uid &&
+        request.resource.data.keys().hasAll(['name', 'email', 'ownerId', 'status', 'createdAt', 'updatedAt']) &&
+        request.resource.data.status in ["new", "contacted", "proposal", "converted", "lost"];
+      
+      // Update permissions
+      allow update: if canEditLead(resource.data) &&
+        request.resource.data.ownerId == resource.data.ownerId && // Can't change ownership
+        request.resource.data.status in ["new", "contacted", "proposal", "converted", "lost"];
+      
+      // Delete permissions - only admins and owners
+      allow delete: if isAuthenticated() && (
+        isAdmin() || 
+        resource.data.ownerId == request.auth.uid
+      );
+      
+      // Special rule for lead conversion - only certain roles can convert
+      allow update: if canEditLead(resource.data) && 
+        canConvertLead() &&
+        request.resource.data.status == "converted" &&
+        resource.data.status != "converted";
+    }
+
+    // Clients collection
+    match /clients/{clientId} {
+      // Read permissions - only users who can view clients
+      allow read: if canViewClients() && (
+        isAdmin() ||                                 // Admins can read all clients
+        resource.data.ownerId == request.auth.uid    // Owners can read their clients
+      );
+      
+      // Create permissions - only users who can convert leads or create clients
+      allow create: if canViewClients() &&
+        request.resource.data.ownerId == request.auth.uid &&
+        request.resource.data.keys().hasAll(['name', 'email', 'company', 'ownerId', 'status', 'createdAt', 'updatedAt']) &&
+        request.resource.data.status in ["active", "inactive", "pending", "archived"];
+      
+      // Update permissions
+      allow update: if canViewClients() && (
+        isAdmin() || 
+        resource.data.ownerId == request.auth.uid
+      ) &&
+      request.resource.data.ownerId == resource.data.ownerId && // Can't change ownership
+      request.resource.data.status in ["active", "inactive", "pending", "archived"];
+      
+      // Delete permissions - only admins and owners
+      allow delete: if canViewClients() && (
+        isAdmin() || 
+        resource.data.ownerId == request.auth.uid
+      );
+    }
+
+    // Activities collection - for audit logging
+    match /activities/{activityId} {
+      // Read permissions - users can read their own activities, admins can read all
+      allow read: if isAuthenticated() && (
+        isAdmin() ||
+        resource.data.userId == request.auth.uid
+      );
+      
+      // Create permissions - any authenticated user can create activities
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.keys().hasAll(['userId', 'type', 'entityId', 'entityType', 'description', 'createdAt']) &&
+        request.resource.data.type in ["lead_created", "lead_updated", "lead_converted", "client_created", "client_updated"];
+      
+      // No update or delete permissions for activities (audit trail integrity)
+      allow update, delete: if false;
+    }
+
+    // AI Chats collection
+    match /aiChats/{chatId} {
+      // Read/write permissions - users can only access their own chats
+      allow read, write: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      
+      // Create permissions
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.keys().hasAll(['userId', 'title', 'messages', 'createdAt', 'updatedAt']);
+      
+      // Admins can read all chats for support purposes
+      allow read: if isAdmin();
+    }
+
+    // Products collection - public read access for pricing plans
+    match /products/{productId} {
+      // Anyone can read active products (for pricing page)
+      allow read: if resource.data.isActive == true;
+      
+      // Only admins can create/update/delete products
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Subscriptions collection
+    match /subscriptions/{subscriptionId} {
+      // Users can read their own subscriptions, admins can read all
+      allow read: if isAuthenticated() && (
+        isAdmin() ||
+        resource.data.userId == request.auth.uid
+      );
+      
+      // Only backend services should create subscriptions (via service account)
+      // For demo purposes, allowing authenticated users to create
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.keys().hasAll(['userId', 'productId', 'status', 'currentPeriodStart', 'currentPeriodEnd', 'createdAt', 'updatedAt']) &&
+        request.resource.data.status in ["active", "canceled", "past_due", "unpaid", "trialing", "incomplete"];
+      
+      // Users can update their own subscriptions (for cancellation requests)
+      // Admins can update any subscription
+      allow update: if isAuthenticated() && (
+        isAdmin() ||
+        (resource.data.userId == request.auth.uid && 
+         request.resource.data.userId == resource.data.userId) // Can't change ownership
+      );
+      
+      // Only admins can delete subscriptions
+      allow delete: if isAdmin();
+    }
+
+    // Payment Intents collection
+    match /paymentIntents/{paymentIntentId} {
+      // Users can read their own payment intents, admins can read all
+      allow read: if isAuthenticated() && (
+        isAdmin() ||
+        resource.data.userId == request.auth.uid
+      );
+      
+      // Users can create payment intents for themselves
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.keys().hasAll(['userId', 'productId', 'amount', 'currency', 'status', 'createdAt', 'updatedAt']);
+      
+      // Only backend services should update payment intents (via webhooks)
+      // For demo purposes, allowing the owner to update
+      allow update: if isAuthenticated() && (
+        isAdmin() ||
+        resource.data.userId == request.auth.uid
+      );
+      
+      // Only admins can delete payment intents
+      allow delete: if isAdmin();
+    }
+
+    // Workflows collection
+    match /workflows/{workflowId} {
+      // Allow all authenticated users to read and write workflows they own
+      allow read, write: if isAuthenticated() && (
+        isAdmin() ||
+        resource.data.ownerId == request.auth.uid
+      );
+      
+      // Allow all authenticated users to create workflows
+      allow create: if isAuthenticated() &&
+        request.resource.data.ownerId == request.auth.uid;
+    }
+
+    // Forms collection (for form builder)
+    match /forms/{formId} {
+      allow read, write: if isAuthenticated() && (
+        isAdmin() ||
+        resource.data.ownerId == request.auth.uid
+      );
+      
+      allow create: if isAuthenticated() &&
+        request.resource.data.ownerId == request.auth.uid;
+    }
+
+    // Form submissions collection
+    match /formSubmissions/{submissionId} {
+      // Read permissions - form owners and admins
+      allow read: if isAuthenticated() && (
+        isAdmin() ||
+        get(/databases/$(database)/documents/forms/$(resource.data.formId)).data.ownerId == request.auth.uid
+      );
+      
+      // Create permissions - anyone can submit forms (for public forms)
+      allow create: if request.resource.data.keys().hasAll(['formId', 'data', 'submittedAt', 'ipAddress']);
+      
+      // No update or delete for submissions (data integrity)
+      allow update, delete: if false;
+    }
+
+    // User API Keys collection - for storing integration API keys
+    match /user_api_keys/{userId} {
+      // Users can only read/write their own API keys
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Create permissions
+      allow create: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        request.resource.data.uid == userId;
+      
+      // Update permissions
+      allow update: if isAuthenticated() && 
+        request.auth.uid == userId;
+      
+      // Delete permissions
+      allow delete: if isAuthenticated() && 
+        request.auth.uid == userId;
+    }
+
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
