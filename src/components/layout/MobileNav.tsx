@@ -9,7 +9,6 @@ import {
   UserPlus, 
   Settings, 
   Search,
-  Brain,
   Shield,
   BarChart3,
   UserCog,
@@ -17,8 +16,7 @@ import {
   Activity,
   Globe,
   Mail,
-  CreditCard,
-  Zap
+  CreditCard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -44,10 +42,7 @@ export default function MobileNav() {
     { name: 'Lead Scraper', href: '/lead-scraper', icon: Search },
     { name: 'Email Outreach', href: '/email-outreach', icon: Mail },
     { name: 'Clients', href: '/clients', icon: Users, requiredRoles: ['admin', 'closer', 'agent'] },
-    { name: 'Automation Builder', href: '/automation-builder', icon: Zap },
-    { name: 'AI Assistant', href: '/ai-assistant', icon: Brain },
     { name: 'Integrations', href: '/integrations-page', icon: Globe },
-    { name: 'Billing', href: '/billing', icon: CreditCard },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 

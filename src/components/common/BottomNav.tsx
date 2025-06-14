@@ -5,12 +5,10 @@ import {
   LayoutDashboard, 
   UserPlus, 
   Users, 
-  Brain, 
   Settings,
   Menu,
   Mail,
   Globe,
-  Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -53,7 +51,7 @@ export default function BottomNav() {
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Leads', href: '/leads', icon: UserPlus },
     { name: 'Menu', href: '#', icon: Menu, isMenu: true },
-    { name: 'Automation', href: '/automation-builder', icon: Zap },
+    { name: 'Email', href: '/email-outreach', icon: Mail },
     { name: 'Integrations', href: '/integrations-page', icon: Globe },
   ];
 

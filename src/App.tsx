@@ -16,8 +16,6 @@ import Dashboard from './pages/Dashboard';
 import Leads from './pages/Leads';
 import LeadScraper from './pages/LeadScraper';
 import Clients from './pages/Clients';
-import AutomationBuilder from './pages/AutomationBuilder';
-import AIAssistant from './pages/AIAssistant';
 import EmailOutreach from './pages/EmailOutreach';
 import Settings from './pages/Settings';
 import Success from './pages/Success';
@@ -27,7 +25,6 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Security from './pages/Security';
 import Compliance from './pages/Compliance';
 import Unauthorized from './pages/Unauthorized';
-import LandingPage from './pages/LandingPage';
 import Blog from './pages/Blog';
 import HelpCenter from './pages/HelpCenter';
 import HelpArticle from './pages/HelpArticle';
@@ -41,7 +38,6 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import Integrations from './pages/Integrations';
 import IntegrationsPage from './pages/IntegrationsPage';
-import Billing from './pages/Billing';
 import { Toaster } from '@/components/ui/sonner';
 import { Loader2 } from 'lucide-react';
 import BottomNav from './components/common/BottomNav';
@@ -122,7 +118,7 @@ function App() {
       <div className="app-container">
         <Routes>
           {/* Landing page */}
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           
           {/* Public routes */}
           <Route path="/login" element={
@@ -208,12 +204,9 @@ function MainLayout() {
                     <Clients />
                   </AuthGuard>
                 } />
-                <Route path="/automation-builder" element={<AutomationBuilder />} />
-                <Route path="/ai-assistant" element={<AIAssistant />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/integrations" element={<Integrations />} />
                 <Route path="/integrations-page" element={<IntegrationsPage />} />
-                <Route path="/billing" element={<Billing />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin" element={

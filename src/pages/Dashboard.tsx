@@ -10,7 +10,6 @@ import {
   AlertCircle,
   Globe,
   Mail,
-  Zap,
   Database,
   ExternalLink,
   Calendar,
@@ -50,7 +49,6 @@ export default function Dashboard() {
   const [integrationStats, setIntegrationStats] = useState({
     connectedIntegrations: 0,
     emailsSent: 0,
-    activeAutomations: 0,
     integrationDetails: [] as {name: string, status: string, icon: any}[]
   });
 
@@ -209,14 +207,9 @@ export default function Dashboard() {
       // Get emails sent count
       const emailStats = await emailAnalyticsOperations.getEmailStats(user.uid);
       
-      // Get active automations count - in a real implementation, this would come from your automations collection
-      // For now, we'll just use a count of 0 since we don't want mock data
-      const activeAutomations = 0;
-      
       setIntegrationStats({
         connectedIntegrations: connectedCount,
         emailsSent: emailStats.total,
-        activeAutomations: activeAutomations,
         integrationDetails
       });
     } catch (error) {
@@ -367,7 +360,7 @@ export default function Dashboard() {
         transition={{ delay: 0.5 }}
       >
         <h2 className="text-xl font-semibold mb-4">System Overview</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Connected Integrations */}
           <Card>
             <CardContent className="p-6">
@@ -461,51 +454,6 @@ export default function Dashboard() {
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     Send Emails
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Active Automations */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-amber-100 rounded-lg">
-                    <Zap className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <h3 className="font-medium">Active Automations</h3>
-                </div>
-                <span className="text-2xl font-bold">{integrationStats.activeAutomations}</span>
-              </div>
-              
-              {integrationStats.activeAutomations > 0 ? (
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600">
-                    {integrationStats.activeAutomations} automation workflows running
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => navigate('/automation-builder')}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Manage Automations
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-sm text-gray-600 mb-2">No active automations</p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => navigate('/automation-builder')}
-                  >
-                    <Zap className="w-4 h-4 mr-2" />
-                    Create Automation
                   </Button>
                 </div>
               )}

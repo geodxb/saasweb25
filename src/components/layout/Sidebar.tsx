@@ -5,17 +5,14 @@ import {
   Users, 
   UserPlus, 
   Settings, 
-  Zap,
   Search,
-  Brain,
   Shield,
   BarChart3,
   UserCog,
   Database,
   Activity,
   Globe,
-  Mail,
-  CreditCard
+  Mail
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
@@ -30,10 +27,7 @@ const navigation = [
   { name: 'Lead Scraper', href: '/lead-scraper', icon: Search },
   { name: 'Email Outreach', href: '/email-outreach', icon: Mail },
   { name: 'Clients', href: '/clients', icon: Users, requiredRoles: ['admin', 'closer', 'agent'] },
-  { name: 'Automation Builder', href: '/automation-builder', icon: Zap },
-  { name: 'AI Assistant', href: '/ai-assistant', icon: Brain },
   { name: 'Integrations', href: '/integrations-page', icon: Globe },
-  { name: 'Billing', href: '/billing', icon: CreditCard },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
