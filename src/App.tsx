@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { analytics, AnalyticsEvents } from '@/lib/analytics';
 import { monitor } from '@/lib/monitoring';
+import { APP_INFO } from '@/lib/config';
+import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
 import AuthGuard from '@/components/auth/AuthGuard';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
