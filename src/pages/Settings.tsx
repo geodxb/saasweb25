@@ -6,7 +6,6 @@ import {
   User, 
   Bell, 
   Shield, 
-  CreditCard,
   Palette,
   Globe,
   Smartphone,
@@ -18,7 +17,6 @@ import {
   ExternalLink,
   AlertTriangle,
   Crown,
-  Zap,
   Calendar,
   Mail,
   Database,
@@ -67,7 +65,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
-import BillingSection from '@/components/billing/BillingSection';
 import IntegrationsSettings from '@/pages/settings/IntegrationsSettings';
 
 interface ApiKey {
@@ -100,15 +97,6 @@ const connectedServices: ConnectedService[] = [
     status: 'active',
   },
   {
-    id: 'stripe',
-    name: 'Stripe',
-    description: 'Process payments and invoices',
-    icon: CreditCard,
-    isConnected: true,
-    lastSync: '1 day ago',
-    status: 'active',
-  },
-  {
     id: 'mailchimp',
     name: 'Mailchimp',
     description: 'Email marketing and automation',
@@ -120,7 +108,7 @@ const connectedServices: ConnectedService[] = [
     id: 'zapier',
     name: 'Zapier',
     description: 'Connect with 5000+ apps',
-    icon: Zap,
+    icon: Webhook,
     isConnected: true,
     lastSync: '5 minutes ago',
     status: 'error',
@@ -263,14 +251,10 @@ export default function Settings() {
         transition={{ delay: 0.1 }}
       >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="w-4 h-4" />
               <span className="hidden sm:inline">Profile</span>
-            </TabsTrigger>
-            <TabsTrigger value="billing" className="flex items-center space-x-2">
-              <CreditCard className="w-4 h-4" />
-              <span className="hidden sm:inline">Billing</span>
             </TabsTrigger>
             <TabsTrigger value="integrations" className="flex items-center space-x-2">
               <Globe className="w-4 h-4" />
@@ -464,11 +448,6 @@ export default function Settings() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Billing Tab */}
-          <TabsContent value="billing" className="space-y-6">
-            <BillingSection />
           </TabsContent>
 
           {/* Integrations Tab */}
