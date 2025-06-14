@@ -482,38 +482,73 @@ export class GmailService {
     }
     
     try {
-      // Check Gmail API status first
-      const status = await this.checkGmailStatus();
+      // Test Gmail API availability by making a simple request
+      const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/profile?key=${GMAIL_CONFIG.apiKey}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       
-      if (!status.available) {
-        setStatusError(status.error || 'Gmail API is not available');
-        setErrorType(status.errorType || 'unknown');
-        toast.error(status.error || 'Gmail API is not available');
-        return;
-      }
-      
-      // Initialize Gmail service
-      await this.initialize();
-      
-      // Authorize Gmail
-      const authorized = await this.authorize();
-      setIsGmailAuthorized(authorized);
-      
-      if (authorized) {
-        toast.success('Successfully connected to Gmail');
-        setStatusError(null);
-        setErrorType(null);
+      if (response.status === 401) {
+        // API key is valid but user is not authenticated - this is expected
+        return { available: true };
+      } else if (response.status === 403) {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || 'Gmail API access denied';
+        
+        if (errorMessage.toLowerCase().includes('api not enabled') || 
+            errorMessage.toLowerCase().includes('api_not_activated')) {
+          return {
+            available: false,
+            error: 'Gmail API is not enabled in your Google Cloud Project',
+            errorType: 'api_disabled'
+          };
+        } else if (errorMessage.toLowerCase().includes('api key')) {
+          return {
+            available: false,
+            error: 'Invalid or restricted API key',
+            errorType: 'invalid_api_key'
+          };
+        } else {
+          return {
+            available: false,
+            error: errorMessage,
+            errorType: 'api_disabled'
+          };
+        }
+      } else if (response.status === 400) {
+        return {
+          available: false,
+          error: 'Invalid API key configuration',
+          errorType: 'invalid_api_key'
+        };
+      } else if (response.ok || response.status === 401) {
+        // 200 or 401 means API is available
+        return { available: true };
       } else {
-        toast.error('Failed to connect to Gmail');
+        return {
+          available: false,
+          error: `Gmail API returned status ${response.status}`,
+          errorType: 'unknown'
+        };
       }
-    } catch (error) {
-      console.error('Error connecting to Gmail:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Error connecting to Gmail';
-      toast.error(errorMessage);
-      setStatusError(errorMessage);
-      setErrorType('connection_error');
-    } finally {
-      setIsConnecting(false);
+    } catch (error: any) {
+      console.error('Error checking Gmail API status:', error);
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        return {
+          available: false,
+          error: 'Network error: Unable to connect to Gmail API',
+          errorType: 'network_error'
+        };
+      }
+      
+      return {
+        available: false,
+        error: error.message || 'Unknown error checking Gmail API',
+        errorType: 'unknown'
+      };
     }
   }
   
