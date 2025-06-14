@@ -14,8 +14,6 @@ import {
   Loader2,
   RefreshCw,
   AlertCircle,
-  CreditCard,
-  DollarSign,
   Zap,
   Workflow,
   Link
@@ -47,8 +45,6 @@ export default function IntegrationsSettings() {
     googleSheets: false,
     googleCalendar: false,
     gmail: false,
-    stripe: false,
-    paypal: false,
     zapier: false,
     n8n: false,
     make: false,
@@ -419,11 +415,10 @@ export default function IntegrationsSettings() {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-5 mb-6">
+            <TabsList className="grid grid-cols-4 mb-6">
               <TabsTrigger value="email">Email</TabsTrigger>
               <TabsTrigger value="calendar">Calendar</TabsTrigger>
               <TabsTrigger value="spreadsheets">Spreadsheets</TabsTrigger>
-              <TabsTrigger value="payment">Payment</TabsTrigger>
               <TabsTrigger value="automation">Automation</TabsTrigger>
             </TabsList>
             
@@ -699,67 +694,6 @@ export default function IntegrationsSettings() {
                         'Save Airtable Settings'
                       )}
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="payment" className="space-y-6">
-              {/* Payment Integrations */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Payment Integrations</CardTitle>
-                  <CardDescription>
-                    Configure payment processing integrations
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-purple-100 rounded-lg">
-                          <CreditCard className="w-5 h-5 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">Stripe</p>
-                          <p className="text-sm text-gray-600">Process credit card payments</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge 
-                          variant="outline" 
-                          className={integrationsStatus.stripe ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}
-                        >
-                          {integrationsStatus.stripe ? "Connected" : "Not Connected"}
-                        </Badge>
-                        <Button variant="outline" onClick={() => window.location.href = '/billing'}>
-                          Configure
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-blue-100 rounded-lg">
-                          <DollarSign className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium">PayPal</p>
-                          <p className="text-sm text-gray-600">Accept PayPal payments</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge 
-                          variant="outline" 
-                          className={integrationsStatus.paypal ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}
-                        >
-                          {integrationsStatus.paypal ? "Connected" : "Not Connected"}
-                        </Badge>
-                        <Button variant="outline" onClick={() => window.location.href = '/billing'}>
-                          Configure
-                        </Button>
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
