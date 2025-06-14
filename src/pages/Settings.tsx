@@ -6,7 +6,6 @@ import {
   User, 
   Bell, 
   Shield, 
-  Palette,
   Globe,
   Smartphone,
   Key,
@@ -17,6 +16,7 @@ import {
   ExternalLink,
   AlertTriangle,
   Crown,
+  Zap,
   Calendar,
   Mail,
   Database,
@@ -108,7 +108,7 @@ const connectedServices: ConnectedService[] = [
     id: 'zapier',
     name: 'Zapier',
     description: 'Connect with 5000+ apps',
-    icon: Webhook,
+    icon: Zap,
     isConnected: true,
     lastSync: '5 minutes ago',
     status: 'error',
@@ -251,7 +251,7 @@ export default function Settings() {
         transition={{ delay: 0.1 }}
       >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="w-4 h-4" />
               <span className="hidden sm:inline">Profile</span>
@@ -267,6 +267,10 @@ export default function Settings() {
             <TabsTrigger value="security" className="flex items-center space-x-2">
               <Shield className="w-4 h-4" />
               <span className="hidden sm:inline">Security</span>
+            </TabsTrigger>
+            <TabsTrigger value="activity" className="flex items-center space-x-2">
+              <Activity className="w-4 h-4" />
+              <span className="hidden sm:inline">Activity</span>
             </TabsTrigger>
             <TabsTrigger value="danger" className="flex items-center space-x-2">
               <AlertTriangle className="w-4 h-4" />
