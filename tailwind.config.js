@@ -57,11 +57,6 @@ export default {
           4: 'hsl(var(--chart-4))',
           5: 'hsl(var(--chart-5))',
         },
-        // Lucafy brand colors
-        lucafy: {
-          amber: '#F0B429',
-          black: '#111111',
-        },
       },
       boxShadow: {
         'material-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',

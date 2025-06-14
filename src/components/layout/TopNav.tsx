@@ -12,7 +12,8 @@ import {
   ChevronDown,
   Menu,
   X,
-  Shield
+  Shield,
+  Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -81,21 +82,13 @@ export default function TopNav() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <nav className="bg-white border-b border-gray-200 px-4 py-2.5">
+    <nav className="bg-[#0f0f12] border-b border-[#1f1f24] px-4 py-2.5">
       <div className="flex flex-wrap justify-between items-center">
         <div className="flex items-center">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center mr-6">
-            <img 
-              src="/logo.svg" 
-              alt="Locafy Logo" 
-              className="h-auto w-[100px]"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.onerror = null;
-                target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNGMEI0MjkiLz48L3N2Zz4=';
-              }}
-            />
+            <Zap className="h-8 w-8 text-primary mr-2" />
+            <span className="text-xl font-bold text-white">Locafyr</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -112,8 +105,8 @@ export default function TopNav() {
                     className={cn(
                       'px-3 py-2 text-sm font-medium rounded-md transition-colors',
                       isActive
-                        ? 'bg-amber-50 text-amber-700'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'bg-primary/20 text-primary'
+                        : 'text-gray-400 hover:text-white hover:bg-[#1f1f24]'
                     )}
                   >
                     <div className="flex items-center space-x-2">
@@ -128,17 +121,17 @@ export default function TopNav() {
             {profile?.role === 'admin' && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="px-3 py-2 text-sm font-medium">
+                  <Button variant="ghost" size="sm" className="px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1f1f24]">
                     <div className="flex items-center space-x-2">
-                      <Shield className="w-4 h-4 text-red-600" />
+                      <Shield className="w-4 h-4 text-accent" />
                       <span>Admin</span>
                       <ChevronDown className="w-4 h-4" />
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="bg-[#1a1a1f] border-[#2a2a30]">
                   {adminNavigation.map((item) => (
-                    <DropdownMenuItem key={item.name} onClick={() => navigate(item.href)}>
+                    <DropdownMenuItem key={item.name} onClick={() => navigate(item.href)} className="text-gray-300 hover:text-white focus:text-white focus:bg-[#2a2a30]">
                       <item.icon className="w-4 h-4 mr-2" />
                       {item.name}
                     </DropdownMenuItem>
@@ -155,7 +148,7 @@ export default function TopNav() {
             variant="ghost" 
             size="sm" 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2"
+            className="p-2 text-gray-400 hover:text-white"
           >
             {isMobileMenuOpen ? (
               <X className="w-5 h-5" />
@@ -171,39 +164,39 @@ export default function TopNav() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-gradient-to-br from-amber-500 to-black text-white text-xs">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
                     {getUserInitials()}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuContent className="w-56 bg-[#1a1a1f] border-[#2a2a30]" align="end" forceMount>
               <div className="flex items-center space-x-2 p-2">
                 <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-gradient-to-br from-amber-500 to-black text-white text-sm">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-sm">
                     {getUserInitials()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">
+                  <p className="text-sm font-medium leading-none text-white">
                     {profile?.displayName || user?.email}
                   </p>
-                  <p className="text-xs leading-none text-muted-foreground">
+                  <p className="text-xs leading-none text-gray-400">
                     {user?.email}
                   </p>
                 </div>
               </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/settings?tab=profile')}>
+              <DropdownMenuSeparator className="bg-[#2a2a30]" />
+              <DropdownMenuItem onClick={() => navigate('/settings?tab=profile')} className="text-gray-300 hover:text-white focus:text-white focus:bg-[#2a2a30]">
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/settings')}>
+              <DropdownMenuItem onClick={() => navigate('/settings')} className="text-gray-300 hover:text-white focus:text-white focus:bg-[#2a2a30]">
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+              <DropdownMenuSeparator className="bg-[#2a2a30]" />
+              <DropdownMenuItem onClick={handleSignOut} className="text-accent hover:text-accent focus:text-accent focus:bg-[#2a2a30]">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sign out</span>
               </DropdownMenuItem>
@@ -214,7 +207,7 @@ export default function TopNav() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden mt-2 py-2 border-t">
+        <div className="md:hidden mt-2 py-2 border-t border-[#1f1f24]">
           <div className="space-y-1 px-2">
             {navigation
               .filter(item => canAccessRoute(item.requiredRoles))
@@ -227,8 +220,8 @@ export default function TopNav() {
                     className={cn(
                       'block px-3 py-2 rounded-md text-base font-medium',
                       isActive
-                        ? 'bg-amber-50 text-amber-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-primary/20 text-primary'
+                        : 'text-gray-400 hover:bg-[#1f1f24] hover:text-white'
                     )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -255,13 +248,13 @@ export default function TopNav() {
                     className={cn(
                       'block px-3 py-2 rounded-md text-base font-medium',
                       location.pathname === item.href
-                        ? 'bg-red-50 text-red-700'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-accent/20 text-accent'
+                        : 'text-gray-400 hover:bg-[#1f1f24] hover:text-white'
                     )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <div className="flex items-center space-x-3">
-                      <item.icon className="w-5 h-5 text-red-600" />
+                      <item.icon className="w-5 h-5 text-accent" />
                       <span>{item.name}</span>
                     </div>
                   </Link>
@@ -270,20 +263,20 @@ export default function TopNav() {
             )}
 
             {/* User Info & Sign Out */}
-            <div className="pt-4 pb-3 border-t border-gray-200">
+            <div className="pt-4 pb-3 border-t border-[#1f1f24]">
               <div className="flex items-center px-4">
                 <div className="flex-shrink-0">
                   <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-gradient-to-br from-amber-500 to-black text-white">
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="ml-3">
-                  <div className="text-base font-medium text-gray-800">
+                  <div className="text-base font-medium text-white">
                     {profile?.displayName || 'User'}
                   </div>
-                  <div className="text-sm font-medium text-gray-500">
+                  <div className="text-sm font-medium text-gray-400">
                     {user?.email}
                   </div>
                 </div>
@@ -291,7 +284,7 @@ export default function TopNav() {
               <div className="mt-3 space-y-1 px-2">
                 <Button 
                   variant="ghost" 
-                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  className="w-full justify-start text-accent hover:text-accent hover:bg-[#1f1f24]"
                   onClick={() => {
                     handleSignOut();
                     setIsMobileMenuOpen(false);
